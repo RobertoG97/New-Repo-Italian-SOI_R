@@ -130,7 +130,7 @@ freq_table(df[M, 14])
 
 ## Collapsed  categories (ALL ITEMS)
 library(admisc)
-df_lav <- df[, 1:14]
+df_lav <- df
 
 
 df_lav$SOI_1 <- lapply(df_lav$SOI_1,FUN = function(X)recode(X, "1=1; 2=2; 3=3; 4=4;5=5; 6=6; 7=7; 8=7; 9=7"))
