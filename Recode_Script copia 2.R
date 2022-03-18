@@ -1,10 +1,8 @@
 rm(list = ls()) 
 dev.off()
-df_655 <- read.csv(file.choose())#DATA_SOIR copia
-df_191 <- df_655[1:191, ]# prendo solo quelli che contengono la categoria 8 nella sotto scala di Desiderio
 
-######### Codifica SOI_R new data
-df_new <- readxl::read_excel(file.choose())#SOI_R new data
+######### Code SOI_R new data
+df_new <- readxl::read_excel(file.choose())#SOI_R new data copia
 df_cod <- df_new
 
 df_cod <- data.frame(AGE=df_cod$`Età:`, EDU=df_cod$`Titolo di studio:`, GENDER=df_cod$`Sesso:`,
@@ -60,7 +58,7 @@ df_cod$GENDER <- as.character(df_cod$GENDER)
 
 
 
-#### SEXUAL ORIENTATION 
+#### SEXUAL ORIENTATION Heterosexual= 0, others =1
 
 df_cod$SEXUAL_ORIENTATION <-  ifelse(df_cod$SEXUAL_ORIENTATION=="Eterosessuale", 0,
                                     df_cod$SEXUAL_ORIENTATION)
@@ -69,7 +67,7 @@ df_cod$SEXUAL_ORIENTATION <-  ifelse(df_cod$SEXUAL_ORIENTATION!=0, 1,
                                      df_cod$SEXUAL_ORIENTATION)
 
 ### Realationship 
-#In una relazione sentimentale, Celibe/Nubile, Coniugato/a"
+#In a relationship=1, single=0
 
 
 df_cod$RELATIONSHIP <- df_new$`Stato civile`
@@ -84,12 +82,8 @@ library(dplyr)
 df_191 <- df_191[, 4:17]
 str(df_cod)
 df_cod <- select(df_cod, AGE, EDU, GENDER, SEXUAL_ORIENTATION, RELATIONSHIP, SOI_1, SOI_2,, SOI_3, SOI_4,SOI_5,SOI_6, SOI_7, SOI_8, SOI_9)
-df_191 <- select(df_191, AGE, EDU, GENDER, Sexual_Orientation, RELATIONSHIP, SOI_1, SOI_2,, SOI_3, SOI_4,SOI_5,SOI_6, SOI_7, SOI_8, SOI_9)
-df_191 <- rename(df_191, SEXUAL_ORIENTATION=Sexual_Orientation)
-
-df <- rbind(df_cod, df_191)
-nrow(df)                                        
-                                             
+nrow(df_cod)
+write.csv(df_cod, "Data_SOIR522.csv")                                             
                                               
                                               
                                               
