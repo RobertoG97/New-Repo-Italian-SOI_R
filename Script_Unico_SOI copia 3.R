@@ -11,10 +11,12 @@ library(ggplot2)
 library(ggpubr)
 library(rstatix)
 library(emmeans)
-library(tidyr)
-library(lme4)
-library(lmerTest)
-library(multilevelTools)
+library(apaTables)
+
+
+
+
+
 
 
 df <- read.csv(file.choose())# DATA_SOIR
@@ -24,6 +26,8 @@ length(which(df$GENDER=="M"))# 178 male, 477 female
 
 
 ######################Confirmatory factor analysis
+df[,8:16]<- lapply(df[,8:16], FUN = function(X)recode(X, "1=1; 2=2; 3=3; 4=4;5=5; 6=6; 7=7; 8=8; 9=8"))## Collapsed  categories 
+
 
 ### One factor model
 mod_uni <- "SOI =~ NA*SOI_1 + SOI_1 + SOI_2 + SOI_3 + SOI_4 + SOI_5 + SOI_6 + SOI_7 + SOI_8 + SOI_9"
@@ -31,6 +35,7 @@ ordSOI_2 <- c("SOI_1", "SOI_2", "SOI_3","SOI_4", "SOI_5", "SOI_6", "SOI_7"
               , "SOI_8", "SOI_9")
 cfa_uni <- cfa(mod_uni, df,  
                ordered =ordSOI_2, std.lv = TRUE)
+
 summary(cfa_uni)
 
 fitmeasures(cfa_uni, fit.measures = c("chisq", "df", "tli", "cfi", "rmsea", "srmr")
@@ -115,8 +120,7 @@ freq_table(df[FE, 16])# ITEM 9  frequency of category of 8=0
 ## Collapsed  categories 
 df_lav <- df
 
-df_lav[,8:16] <- lapply(df_lav[,8:16], 
-                 FUN = function(X)recode(X, "1=1; 2=2; 3=3; 4=4;5=5; 6=6; 7=7; 8=7; 9=7"))## Collapsed  categories 
+df_lav[,8:16] <- lapply(df_lav[,8:16],FUN = function(X)recode(X, "1=1; 2=2; 3=3; 4=4;5=5; 6=6; 7=7; 8=7"))## Collapsed  categories 
 
 
 df_lav <- as.data.frame(df_lav)
@@ -171,7 +175,8 @@ fitmeasures(fit_loth, fit.measures = c("chisq", "df", "tli", "cfi", "rmsea", "sr
             output ="matrix")
 
 
-lavTestLRT(fit_loth, fit_thr, fit_base3)
+compare<- lavTestLRT(fit_loth, fit_thr, fit_base3)
+
 
 
 ######################### Correlation matrix
@@ -182,13 +187,10 @@ df$Des <-  rowMeans(df[, 14:16],na.rm = T)
 df$SOI <- rowMeans(df[, 8:16])
 df$GENDER <- as.character(df$GENDER)
 
-x_cor <- df[,c(4,5,6,7,17,18,19,20,21)]
-x_cor$GENDER <- ifelse(x_cor$GENDER=="F", 0, x_cor$GENDER)
-x_cor$GENDER <- ifelse(x_cor$GENDER=="M", 1, x_cor$GENDER)
 
-x_cor <- as.matrix(x_cor)
-cor_mat <- Hmisc::rcorr(x_cor, type = "spearman")
-#write.csv(round(cor_mat$r, 2), "COR_MAT.csv")
+
+apa_cor <- apa.cor.table(df[,c(4,5,6,7,17,18,19,20,21)], filename="Table2_COR.xls")# correlation matrix APA-style
+
 
 ######################### ANCOVA ~gender+age
 
@@ -199,7 +201,7 @@ df$RELATIONSHIP <- as.factor(df$RELATIONSHIP)
 df$Sexual_Orientation <- as.factor(df$Sexual_Orientation)
 df$Sexual_Orientation
 m_VS_f2 <- compareGroups(GENDER~AGE+EDU+RELATIONSHIP+Sexual_Orientation, data= df, method = c(AGE = NA))
-summary(m_VS_f2)
+
 des_t <- summary(m_VS_f2)
 
 #write.csv(des_t$Sexual_Orientation, "SEx_OR.csv")
@@ -329,6 +331,10 @@ grid.arrange(p,p2,p4,p3, top= "SOI differences between gender",
 ######################### Interaction 
 
 ##Long data-frame
+library(tidyr)
+library(lme4)
+library(lmerTest)
+
 SOG <- c(1:655)
 df <- cbind(df, SOG)
 B <- rep("B", 1965)
@@ -361,6 +367,9 @@ t.test(df$Att~df$RELATIONSHIP)
 t.test(df$Des~df$RELATIONSHIP)
 
 
+effectsize::cohens_d(Beh~df$RELATIONSHIP, data = df)
+effectsize::cohens_d(Att~df$RELATIONSHIP, data = df)
+effectsize::cohens_d(Des~df$RELATIONSHIP, data = df)# .88, strong effect
 
 
 
