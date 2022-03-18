@@ -128,21 +128,36 @@ freq_table(df[M, 14])
 
 
 
-## Collapsed  categories 
+## Collapsed  categories (ALL ITEMS)
 library(admisc)
-df_lav <- df
+df_lav <- df[, 1:14]
 
 
-df_lav$SOI_1 <- lapply(df_lav$SOI_1,FUN = function(X)recode(X, "1=1; 2=2; 3=3; 4=4;5=5; 6=6; 7=7; 8=7; 9=7"))## Collapsed  categories ITEM 1
+df_lav$SOI_1 <- lapply(df_lav$SOI_1,FUN = function(X)recode(X, "1=1; 2=2; 3=3; 4=4;5=5; 6=6; 7=7; 8=7; 9=7"))
+df_lav$SOI_2 <- lapply(df_lav$SOI_2,FUN = function(X)recode(X, "1=1; 2=2; 3=3; 4=4;5=5; 6=6; 7=7; 8=7; 9=7"))
+df_lav$SOI_3 <- lapply(df_lav$SOI_3,FUN = function(X)recode(X, "1=1; 2=2; 3=3; 4=4;5=5; 6=6; 7=7; 8=7; 9=7"))
+df_lav$SOI_4 <- lapply(df_lav$SOI_4,FUN = function(X)recode(X, "1=1; 2=2; 3=3; 4=4;5=5; 6=6; 7=7; 8=7; 9=7"))
+df_lav$SOI_5 <- lapply(df_lav$SOI_5,FUN = function(X)recode(X, "1=1; 2=2; 3=3; 4=4;5=5; 6=6; 7=7; 8=7; 9=7"))
+df_lav$SOI_6 <- lapply(df_lav$SOI_6,FUN = function(X)recode(X, "1=1; 2=2; 3=3; 4=4;5=5; 6=6; 7=7; 8=7; 9=7"))
+df_lav$SOI_7 <- lapply(df_lav$SOI_7,FUN = function(X)recode(X, "1=1; 2=2; 3=3; 4=4;5=5; 6=6; 7=7; 8=7; 9=7"))
+df_lav$SOI_8 <- lapply(df_lav$SOI_8,FUN = function(X)recode(X, "1=1; 2=2; 3=3; 4=4;5=5; 6=6; 7=7; 8=7; 9=7"))
+df_lav$SOI_9 <- lapply(df_lav$SOI_9,FUN = function(X)recode(X, "1=1; 2=2; 3=3; 4=4;5=5; 6=6; 7=7; 8=7; 9=7"))
+
 df_lav$SOI_1 <- as.integer(df_lav$SOI_1)
-
-
-
+df_lav$SOI_2 <- as.integer(df_lav$SOI_2)
+df_lav$SOI_3 <- as.integer(df_lav$SOI_3)
+df_lav$SOI_4 <- as.integer(df_lav$SOI_4)
+df_lav$SOI_5 <- as.integer(df_lav$SOI_5)
+df_lav$SOI_6 <- as.integer(df_lav$SOI_6)
+df_lav$SOI_7 <- as.integer(df_lav$SOI_7)
+df_lav$SOI_8 <- as.integer(df_lav$SOI_8)
+df_lav$SOI_9 <- as.integer(df_lav$SOI_9)
 
 
 
 ## Compute models
 library(semTools)
+
 
 df_lav <- df_lav[complete.cases(df_lav$GENDER), ]
 base_model.3 <-  measEq.syntax(configural.model = mod_tri,
