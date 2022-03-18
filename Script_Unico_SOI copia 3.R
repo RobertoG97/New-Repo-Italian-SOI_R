@@ -1,32 +1,29 @@
 rm(list = ls()) 
 dev.off()
-library(effects)
-library(sjPlot) 
-library(lavaan)
-library(semTools)
-library(semPlot)
-library(admisc)
-library(compareGroups)
-library(ggplot2)
-library(ggpubr)
-library(rstatix)
-library(emmeans)
-library(apaTables)
 
 
+###### Load data
+
+df_191 <- read.csv(file.choose())# DATA_SOIR copia 3
+df_191 <- df_191[1:191,4:17]
+df_191 <- dplyr:: select(df_191, AGE, EDU, GENDER, SEXUAL_ORIENTATION=Sexual_Orientation, 
+                         RELATIONSHIP, SOI_1, SOI_2,, SOI_3, SOI_4,SOI_5,SOI_6, SOI_7, SOI_8, SOI_9)
 
 
+df_522 <- read.csv(file.choose())# DATA_SOIR522
+df_522 <- df_522[, 2:15]
+df <- rbind(df_191, df_522)
 
+df$AGE <- as.numeric(df$AGE)
 
-
-df <- read.csv(file.choose())# DATA_SOIR
 psych::describe(df$AGE)# age descriptive
-length(which(df$GENDER=="M"))# 178 male, 477 female
+length(which(df$GENDER=="M"))
+length(which(df$GENDER=="F"))# 179 male, 524 female
 
 
 
 ######################Confirmatory factor analysis
-df[,8:16]<- lapply(df[,8:16], FUN = function(X)recode(X, "1=1; 2=2; 3=3; 4=4;5=5; 6=6; 7=7; 8=8; 9=8"))## Collapsed  categories 
+library(lavaan)
 
 
 ### One factor model
@@ -105,31 +102,49 @@ x$P# p-value
 
 
 ######################### Measurement invariance 
+library(rstatix)
 FE <- which(df$GENDER=="F")
-freq_table(df[FE, 8])
+M <-  which(df$GENDER=="M")
+freq_table(df[FE, 6]) #item 1, frequency of category  8 and 9 = 0
+freq_table(df[FE, 7]) 
+freq_table(df[FE, 8]) 
 freq_table(df[FE, 9]) 
-freq_table(df[FE, 10]) #item 3, frequency of category  9 = 0
-freq_table(df[FE, 11]) 
-freq_table(df[FE, 12]) 
+freq_table(df[FE, 10]) 
+freq_table(df[FE, 11])
+freq_table(df[FE, 12])
 freq_table(df[FE, 13])
 freq_table(df[FE, 14])
-freq_table(df[FE, 15])
-freq_table(df[FE, 16])# ITEM 9  frequency of category of 8=0
+
+freq_table(df[M, 6]) 
+freq_table(df[M, 7]) 
+freq_table(df[M, 8]) 
+freq_table(df[M, 9]) 
+freq_table(df[M, 10]) 
+freq_table(df[M, 11])
+freq_table(df[M, 12])
+freq_table(df[M, 13])
+freq_table(df[M, 14])
+
+
 
 
 ## Collapsed  categories 
+library(admisc)
 df_lav <- df
 
-df_lav[,8:16] <- lapply(df_lav[,8:16],FUN = function(X)recode(X, "1=1; 2=2; 3=3; 4=4;5=5; 6=6; 7=7; 8=7"))## Collapsed  categories 
+
+df_lav$SOI_1 <- lapply(df_lav$SOI_1,FUN = function(X)recode(X, "1=1; 2=2; 3=3; 4=4;5=5; 6=6; 7=7; 8=7; 9=7"))## Collapsed  categories ITEM 1
+df_lav$SOI_1 <- as.integer(df_lav$SOI_1)
 
 
-df_lav <- as.data.frame(df_lav)
-df_lav <- cbind(df_lav, GENDER=df$GENDER)
+
 
 
 
 ## Compute models
+library(semTools)
 
+df_lav <- df_lav[complete.cases(df_lav$GENDER), ]
 base_model.3 <-  measEq.syntax(configural.model = mod_tri,
                                data = df_lav,
                                ordered = ordSOI_2,parameterization = "delta", ID.fac = "std.lv",
@@ -155,6 +170,7 @@ thresholds <-   measEq.syntax(configural.model = mod_tri,
 thresholds <- as.character(thresholds)
 
 fit_thr <- cfa(thresholds, ordered = ordSOI_2, data = df_lav, group = "GENDER")
+summary(fit_thr)
 fitmeasures(fit_thr, fit.measures = c("chisq", "df", "tli", "cfi", "rmsea", "srmr"),
             output ="matrix")
 
@@ -174,22 +190,22 @@ fit_loth <- cfa(load_thre, ordered = ordSOI_2, data = df_lav,group = "GENDER")
 fitmeasures(fit_loth, fit.measures = c("chisq", "df", "tli", "cfi", "rmsea", "srmr"),
             output ="matrix")
 
-
-compare<- lavTestLRT(fit_loth, fit_thr, fit_base3)
+lavTestLRT(fit_loth, fit_thr, fit_base3)
 
 
 
 ######################### Correlation matrix
 ### Sub-scales' means score and Gender=factor
+library(apaTables)
 df$Beh <- rowMeans(df[, 8:10])
 df$Att <-  rowMeans(df[, 11:13])
 df$Des <-  rowMeans(df[, 14:16],na.rm = T)
 df$SOI <- rowMeans(df[, 8:16])
 df$GENDER <- as.character(df$GENDER)
 
+df
 
-
-apa_cor <- apa.cor.table(df[,c(4,5,6,7,17,18,19,20,21)], filename="Table2_COR.xls")# correlation matrix APA-style
+apa_cor <- apa.cor.table(df[, c(1,2,3,4,5,15,16,17,18)], filename="Table2_COR.doc")# correlation matrix APA-style
 
 
 ######################### ANCOVA ~gender+age
@@ -197,17 +213,20 @@ apa_cor <- apa.cor.table(df[,c(4,5,6,7,17,18,19,20,21)], filename="Table2_COR.xl
 
 
 ### Test groups' equality
+library(emmeans)
+library(compareGroups)
+library(ggplot2)
+library(ggpubr)
 df$RELATIONSHIP <- as.factor(df$RELATIONSHIP)
-df$Sexual_Orientation <- as.factor(df$Sexual_Orientation)
-df$Sexual_Orientation
-m_VS_f2 <- compareGroups(GENDER~AGE+EDU+RELATIONSHIP+Sexual_Orientation, data= df, method = c(AGE = NA))
+df$SEXUAL_ORIENTATION<- as.factor(df$SEXUAL_ORIENTATION)
+m_VS_f2 <- compareGroups(GENDER~AGE+EDU+RELATIONSHIP+SEXUAL_ORIENTATION, data= df, method = c(AGE = NA))
 
 des_t <- summary(m_VS_f2)
 
 #write.csv(des_t$Sexual_Orientation, "SEx_OR.csv")
 
 gender_T <- createTable(m_VS_f2, show.all = TRUE)
-gender_T# no equality for AGE
+gender_T# no equality for AGEE
 
 
 
@@ -235,7 +254,7 @@ p <- ggline(get_emmeans(pwc1), x = "GENDER", y = "emmean") +
     caption = get_pwc_label(pwc1)
   )
 
-par(mfrow=c(2,2))
+
 effectsize::cohens_d(Beh~GENDER, data = df)#Cohen D
 
 ## Att
@@ -335,11 +354,11 @@ library(tidyr)
 library(lme4)
 library(lmerTest)
 
-SOG <- c(1:655)
+SOG <- c(1:713)
 df <- cbind(df, SOG)
-B <- rep("B", 1965)
-A <- rep("A", 1965)
-D <- rep("D", 1965)
+B <- rep("B", 2139)
+A <- rep("A", 2139)
+D <- rep("D", 2139)
 SUB <- c(B,A,D)
 df_l <- gather(df, Item, score, SOI_1:SOI_9)
 df_l$Item <- factor(df_l$Item)
@@ -357,6 +376,8 @@ m1 <- lmer(score ~ 1 + SUB + GENDER + RELATIONSHIP + SUB:RELATIONSHIP +
 car::Anova(m1, type = "III") 
 summary(m1)
 
+library(sjPlot)
+library(effects)
 plot_model(m1, type = "pred", terms = "SUB")
 plot_model(m1, type = "pred", terms = "GENDER")
 plot_model(m1, type = "pred", terms = c("SUB", "RELATIONSHIP"))
