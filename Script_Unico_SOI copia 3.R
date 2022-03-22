@@ -216,10 +216,10 @@ lavTestLRT(fit_loth, fit_thr, fit_base3)
 ######################### Correlation matrix
 ### Sub-scales' means score and Gender=factor
 library(apaTables)
-df$Beh <- rowMeans(df[, 8:10])
-df$Att <-  rowMeans(df[, 11:13])
-df$Des <-  rowMeans(df[, 14:16],na.rm = T)
-df$SOI <- rowMeans(df[, 8:16])
+df$Beh <- rowMeans(df[, 6:8])
+df$Att <-  rowMeans(df[, 9:11])
+df$Des <-  rowMeans(df[, 12:14],na.rm = T)
+df$SOI <- rowMeans(df[, 6:14])
 df$GENDER <- as.character(df$GENDER)
 df$GENDER <- as.factor(df$GENDER)
 
@@ -230,7 +230,7 @@ df_tab$GENDER <- ifelse(df_tab$GENDER=="F", 0, df_tab$GENDER)
 df_tab$GENDER <- ifelse(df_tab$GENDER!=0, 1, df_tab$GENDER)
 
 
-apa_cor <- apa.cor.table(df_tab[, c(1,2,3,4,5,15,16,17,18)], filename="Table3_COR.doc")# correlation matrix APA-style
+apa_cor <- apa.cor.table(df_tab[, c(1,2,3,4,5,15,16,17,18)], filename="Table4_COR_.doc")# correlation matrix APA-style
 
 
 
