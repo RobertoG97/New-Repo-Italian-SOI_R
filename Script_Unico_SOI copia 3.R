@@ -16,8 +16,11 @@ df_522 <- df_522[, 2:15]
 df <- rbind(df_191, df_522)
 
 df$AGE <- as.numeric(df$AGE)
+nrow(df)
 
 psych::describe(df$AGE)# age descriptive
+
+
 length(which(df$GENDER=="M"))
 length(which(df$GENDER=="F"))# 179 male, 524 female
 
@@ -218,10 +221,17 @@ df$Att <-  rowMeans(df[, 11:13])
 df$Des <-  rowMeans(df[, 14:16],na.rm = T)
 df$SOI <- rowMeans(df[, 8:16])
 df$GENDER <- as.character(df$GENDER)
+df$GENDER <- as.factor(df$GENDER)
 
-df
+df_tab <- df
+df_tab$SEXUAL_ORIENTATION<- as.numeric(df_tab$SEXUAL_ORIENTATION)
+df_tab$RELATIONSHIP <- as.numeric(df_tab$RELATIONSHIP)
+df_tab$GENDER <- ifelse(df_tab$GENDER=="F", 0, df_tab$GENDER)
+df_tab$GENDER <- ifelse(df_tab$GENDER!=0, 1, df_tab$GENDER)
 
-apa_cor <- apa.cor.table(df[, c(1,2,3,4,5,15,16,17,18)], filename="Table2_COR.doc")# correlation matrix APA-style
+
+apa_cor <- apa.cor.table(df_tab[, c(1,2,3,4,5,15,16,17,18)], filename="Table3_COR.doc")# correlation matrix APA-style
+
 
 
 ######################### ANCOVA ~gender+age
@@ -235,9 +245,10 @@ library(ggplot2)
 library(ggpubr)
 df$RELATIONSHIP <- as.factor(df$RELATIONSHIP)
 df$SEXUAL_ORIENTATION<- as.factor(df$SEXUAL_ORIENTATION)
-m_VS_f2 <- compareGroups(GENDER~AGE+EDU+RELATIONSHIP+SEXUAL_ORIENTATION, data= df, method = c(AGE = NA))
+m_VS_f2 <- compareGroups(GENDER~AGE+EDU+RELATIONSHIP+SEXUAL_ORIENTATION, data= df)
 
 des_t <- summary(m_VS_f2)
+
 
 #write.csv(des_t$Sexual_Orientation, "SEx_OR.csv")
 
