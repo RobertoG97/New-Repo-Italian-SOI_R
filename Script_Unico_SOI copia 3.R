@@ -58,19 +58,13 @@ fitmeasures(cfa_tri, fit.measures = c("chisq", "df", "tli", "cfi", "rmsea", "srm
 
 ### Bifactor model 
 
-mod_bif  <- "Beh=~NA*SOI_1 + SOI_1 + SOI_2 + SOI_3
-            Att =~ NA*SOI_4 + SOI_4 + SOI_5 + SOI_6 
-            Des =~ NA*SOI_7 + SOI_7 + SOI_8 + SOI_9
-            SOI =~ NA*SOI_1 + SOI_1 + SOI_2 + SOI_3 + SOI_4 + SOI_5 + SOI_6 + SOI_7 + SOI_8 + SOI_9
-            Att ~~ 0*Des
-            Beh ~~ 0*Des
-            Beh ~~ 0*Att
-            Att ~~ 0*SOI
-            Beh ~~ 0*SOI
-            Des ~~ 0*SOI
 
-"
-cfa_bif <- cfa(mod_bif, df, ordered = ordSOI_2, std.lv = TRUE)
+mod_bif  <- "SOI =~ NA*SOI_1 + SOI_1 + SOI_2 + SOI_3 + SOI_4 + SOI_5 + SOI_6 + SOI_7 + SOI_8 + SOI_9
+             Beh=~NA*SOI_1 + SOI_1 + SOI_2 + SOI_3
+             Att =~ NA*SOI_4 + SOI_4 + SOI_5 + SOI_6 
+             Des =~ NA*SOI_7 + SOI_7 + SOI_8 + SOI_9"
+
+cfa_bif <- cfa(mod_bif, df, ordered = ordSOI_2, std.lv = TRUE, orthogonal=T)
 
 summary(cfa_bif)
 fitmeasures(cfa_bif, fit.measures = c("chisq", "df", "tli", "cfi", "rmsea", "srmr"), 
