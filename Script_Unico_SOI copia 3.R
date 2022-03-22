@@ -219,7 +219,7 @@ library(apaTables)
 df$Beh <- rowMeans(df[, 6:8])
 df$Att <-  rowMeans(df[, 9:11])
 df$Des <-  rowMeans(df[, 12:14],na.rm = T)
-df$SOI <- rowMeans(df[, 6:14])
+df$SOI <- rowMeans(df[, 6:14],na.rm = T)
 df$GENDER <- as.character(df$GENDER)
 df$GENDER <- as.factor(df$GENDER)
 
