@@ -77,9 +77,9 @@ anova(cfa_tri, cfa_uni, cfa_bif)# compare model
 
 ######################### Internal consistency
 
-psych::omegaFromSem(cfa_bif)
+omega<- psych::omegaFromSem(cfa_bif)
 
-
+omega$omega
 
 
 
