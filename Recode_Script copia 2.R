@@ -66,7 +66,7 @@ df_cod$SEXUAL_ORIENTATION <-  ifelse(df_cod$SEXUAL_ORIENTATION=="Eterosessuale",
 df_cod$SEXUAL_ORIENTATION <-  ifelse(df_cod$SEXUAL_ORIENTATION!=0, 1,
                                      df_cod$SEXUAL_ORIENTATION)
 
-### Realationship 
+### Relationship 
 #In a relationship=1, single=0
 
 
