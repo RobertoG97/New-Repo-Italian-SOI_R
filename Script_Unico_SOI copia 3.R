@@ -23,6 +23,7 @@ length(which(df$GENDER=="F"))# 179 male, 524 female
 
 
 ######################Confirmatory factor analysis
+
 library(lavaan)
 
 
@@ -54,19 +55,12 @@ fitmeasures(cfa_tri, fit.measures = c("chisq", "df", "tli", "cfi", "rmsea", "srm
 
 ### Bifactor model 
 
-mod_bif  <- "Beh=~NA*SOI_1 + SOI_1 + SOI_2 + SOI_3
+mod_bif  <- "SOI =~ NA*SOI_1 + SOI_1 + SOI_2 + SOI_3 + SOI_4 + SOI_5 + SOI_6 + SOI_7 + SOI_8 + SOI_9
+            Beh=~NA*SOI_1 + SOI_1 + SOI_2 + SOI_3
             Att =~ NA*SOI_4 + SOI_4 + SOI_5 + SOI_6 
             Des =~ NA*SOI_7 + SOI_7 + SOI_8 + SOI_9
-            SOI =~ NA*SOI_1 + SOI_1 + SOI_2 + SOI_3 + SOI_4 + SOI_5 + SOI_6 + SOI_7 + SOI_8 + SOI_9
-            Att ~~ 0*Des
-            Beh ~~ 0*Des
-            Beh ~~ 0*Att
-            Att ~~ 0*SOI
-            Beh ~~ 0*SOI
-            Des ~~ 0*SOI
-
 "
-cfa_bif <- cfa(mod_bif, df, ordered = ordSOI_2, std.lv = TRUE)
+cfa_bif <- cfa(mod_bif, df, ordered = ordSOI_2, std.lv = TRUE, orthogonal = T)
 
 summary(cfa_bif)
 fitmeasures(cfa_bif, fit.measures = c("chisq", "df", "tli", "cfi", "rmsea", "srmr"), 
@@ -89,9 +83,10 @@ psych::omegaFromSem(cfa_bif)
 
 
 ######################### Test-retest reliability 
+
 df.retest <- read.csv(file.choose(), stringsAsFactors = T)# TestRetest
 
-x<-Hmisc::rcorr(as.matrix(df.retest[, c('SOI_BEH_t0', 'SOI_BEH_t1', "SOI_ATT_t0", 
+x <- Hmisc::rcorr(as.matrix(df.retest[, c('SOI_BEH_t0', 'SOI_BEH_t1', "SOI_ATT_t0", 
                                         "SOI_ATT_t1","SOI_DES_t0", "SOI_DES_t1", 
                                         "SOI_t0_TOT", "SOI_t1_TOT")]), type = "spearman")
 
@@ -102,6 +97,7 @@ x$P# p-value
 
 
 ######################### Measurement invariance 
+
 library(rstatix)
 FE <- which(df$GENDER=="F")
 M <-  which(df$GENDER=="M")
@@ -125,21 +121,12 @@ freq_table(df[M, 12])
 freq_table(df[M, 13])
 freq_table(df[M, 14])
 
-
-
-
 ## Collapsed  categories 
 library(admisc)
 df_lav <- df
 
-
 df_lav$SOI_1 <- lapply(df_lav$SOI_1,FUN = function(X)recode(X, "1=1; 2=2; 3=3; 4=4;5=5; 6=6; 7=7; 8=7; 9=7"))## Collapsed  categories ITEM 1
 df_lav$SOI_1 <- as.integer(df_lav$SOI_1)
-
-
-
-
-
 
 ## Compute models
 library(semTools)
@@ -158,9 +145,6 @@ summary(fit_base3)
 fitmeasures(fit_base3, fit.measures = c("chisq", "df", "tli", "cfi", "rmsea", "srmr"),
             output  = "matrix")   
 
-
-
-
 thresholds <-   measEq.syntax(configural.model = mod_tri,
                               data = df_lav,
                               ordered = ordSOI_2,parameterization = "delta", ID.fac = "std.lv",
@@ -174,10 +158,7 @@ summary(fit_thr)
 fitmeasures(fit_thr, fit.measures = c("chisq", "df", "tli", "cfi", "rmsea", "srmr"),
             output ="matrix")
 
-
 lavTestLRT(fit_base3, fit_thr)
-
-
 
 load_thre <-  measEq.syntax(configural.model = mod_tri,
                             data = df_lav,
@@ -192,8 +173,6 @@ fitmeasures(fit_loth, fit.measures = c("chisq", "df", "tli", "cfi", "rmsea", "sr
 
 lavTestLRT(fit_loth, fit_thr, fit_base3)
 
-
-
 ######################### Correlation matrix
 ### Sub-scales' means score and Gender=factor
 library(apaTables)
@@ -207,10 +186,7 @@ df
 
 apa_cor <- apa.cor.table(df[, c(1,2,3,4,5,15,16,17,18)], filename="Table2_COR.doc")# correlation matrix APA-style
 
-
 ######################### ANCOVA ~gender+age
-
-
 
 ### Test groups' equality
 library(emmeans)
@@ -270,7 +246,6 @@ adj2 <- attr(pwc2, "emmeans")## adjusted means
 
 round(t2$estimate,1)== round(adj2$emmean,1)## difference between adj and means of groups
 ## No differences= no age influence 
-
 
 ### Plot + eta square
 pwc2.0 <- add_xy_position(pwc2, x = "GENDER", fun = "mean_se" )
@@ -344,9 +319,6 @@ grid.arrange(p,p2,p4,p3, top= "SOI differences between gender",
              layout_matrix = rbind(c(3, 1, NA),
                                    c(3, 2, 4)))
 
-
-
-
 ######################### Interaction 
 
 ##Long data-frame
@@ -372,7 +344,6 @@ m1 <- lmer(score ~ 1 + SUB + GENDER + RELATIONSHIP + SUB:RELATIONSHIP +
              SUB:GENDER + GENDER:RELATIONSHIP + SUB:GENDER:RELATIONSHIP + 
              (1 | Item) + (1 | SOG), data = df_l)
 
-
 car::Anova(m1, type = "III") 
 summary(m1)
 
@@ -386,7 +357,6 @@ plot_model(m1, type = "pred", terms = c("SUB", "GENDER"))
 t.test(df$Beh~df$RELATIONSHIP)
 t.test(df$Att~df$RELATIONSHIP)
 t.test(df$Des~df$RELATIONSHIP)
-
 
 effectsize::cohens_d(Beh~df$RELATIONSHIP, data = df)
 effectsize::cohens_d(Att~df$RELATIONSHIP, data = df)
