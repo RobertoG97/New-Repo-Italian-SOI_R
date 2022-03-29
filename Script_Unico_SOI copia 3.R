@@ -1,8 +1,6 @@
 rm(list = ls()) 
 dev.off()
 
-
-
 ###### Load data
 df <- read.csv(file.choose())#DATA_SOI_TOT
 
