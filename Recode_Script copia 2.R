@@ -79,12 +79,17 @@ df_cod$RELATIONSHIP <- lapply(df_cod$RELATIONSHIP,
 df_cod$RELATIONSHIP <- as.numeric(df_cod$RELATIONSHIP )
 
 library(dplyr)
+df_191 <- read.csv(file.choose())# Data_SOIR copia 3
 df_191 <- df_191[, 4:17]
+df_191 <- df_191[1:191, ]
 str(df_cod)
 df_cod <- select(df_cod, AGE, EDU, GENDER, SEXUAL_ORIENTATION, RELATIONSHIP, SOI_1, SOI_2,, SOI_3, SOI_4,SOI_5,SOI_6, SOI_7, SOI_8, SOI_9)
-nrow(df_cod)
-write.csv(df_cod, "Data_SOIR522.csv")                                             
-                                              
+df_191 <- select(df_191, AGE, EDU, GENDER, SEXUAL_ORIENTATION=Sexual_Orientation, 
+                         RELATIONSHIP, SOI_1, SOI_2,, SOI_3, SOI_4,SOI_5,SOI_6, SOI_7, SOI_8, SOI_9)
+df_tot <- rbind(df_191, df_cod)
+
+write.csv(df_tot, "DATA_SOI_TOT")    
+ 
                                               
                                               
                                               

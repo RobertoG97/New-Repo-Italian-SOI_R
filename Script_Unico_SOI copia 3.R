@@ -4,16 +4,7 @@ dev.off()
 
 
 ###### Load data
-
-df_191 <- read.csv(file.choose())# DATA_SOIR copia 3
-df_191 <- df_191[1:191,4:17]
-df_191 <- dplyr:: select(df_191, AGE, EDU, GENDER, SEXUAL_ORIENTATION=Sexual_Orientation, 
-                         RELATIONSHIP, SOI_1, SOI_2,, SOI_3, SOI_4,SOI_5,SOI_6, SOI_7, SOI_8, SOI_9)
-
-
-df_522 <- read.csv(file.choose())# DATA_SOIR522
-df_522 <- df_522[, 2:15]
-df <- rbind(df_191, df_522)
+df <- read.csv(file.choose())#DATA_SOI_TOT
 
 df$AGE <- as.numeric(df$AGE)
 nrow(df)
@@ -24,7 +15,7 @@ psych::describe(df$AGE)# age descriptive
 length(which(df$GENDER=="M"))
 length(which(df$GENDER=="F"))# 179 male, 524 female
 
-
+df <- df[,-1]
 
 ######################Confirmatory factor analysis
 library(lavaan)
@@ -237,7 +228,8 @@ library(ggplot2)
 library(ggpubr)
 df$RELATIONSHIP <- as.factor(df$RELATIONSHIP)
 df$SEXUAL_ORIENTATION<- as.factor(df$SEXUAL_ORIENTATION)
-m_VS_f2 <- compareGroups(GENDER~AGE+EDU+RELATIONSHIP+SEXUAL_ORIENTATION, data= df)
+df$AGE <- as.numeric(df$AGE)
+m_VS_f2 <- compareGroups(GENDER~AGE+EDU+RELATIONSHIP+SEXUAL_ORIENTATION, data= df,  method = c(AGE = NA))
 
 des_t <- summary(m_VS_f2)
 
@@ -245,7 +237,7 @@ des_t <- summary(m_VS_f2)
 #write.csv(des_t$Sexual_Orientation, "SEx_OR.csv")
 
 gender_T <- createTable(m_VS_f2, show.all = TRUE)
-gender_T# no equality for AGEE
+gender_T# no equality for AGE
 
 
 
