@@ -226,7 +226,6 @@ library(ggplot2)
 library(ggpubr)
 df$RELATIONSHIP <- as.factor(df$RELATIONSHIP)
 df$SEXUAL_ORIENTATION<- as.factor(df$SEXUAL_ORIENTATION)
-df$AGE <- as.numeric(df$AGE)
 m_VS_f2 <- compareGroups(GENDER~AGE+EDU+RELATIONSHIP+SEXUAL_ORIENTATION, data= df,  method = c(AGE = NA))
 
 des_t <- summary(m_VS_f2)
