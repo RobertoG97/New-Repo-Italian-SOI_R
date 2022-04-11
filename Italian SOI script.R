@@ -74,7 +74,7 @@ omega
 
 
 ######################### Test-retest reliability 
-df.retest <- read.csv(file.choose(), stringsAsFactors = T)# TestRetest
+df.retest <- read.csv(file.choose(), stringsAsFactors = T)# Data Test Re-test
 
 x<-Hmisc::rcorr(as.matrix(df.retest[, c('SOI_BEH_t0', 'SOI_BEH_t1', "SOI_ATT_t0", 
                                         "SOI_ATT_t1","SOI_DES_t0", "SOI_DES_t1", 
