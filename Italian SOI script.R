@@ -2,7 +2,7 @@ rm(list = ls())
 dev.off()
 
 ###### Load data
-df <- read.csv(file.choose())#DATA_SOI_TOT
+df <- read.csv(file.choose())#Data Italian SOI
 
 df$AGE <- as.numeric(df$AGE)
 nrow(df)
