@@ -405,56 +405,6 @@ effectsize::cohens_d(Des~df$RELATIONSHIP, data = df)
 
 
 
-########### Plot sem
-library(lavaanPlot)
-lavaanPlot(model = cfa_bif,
-           graph_options = list(layout= "circo" ,overlap = "FALSE", fontsize = "15", compound=T, nodesep = 3, ranksep = 3),
-           node_options = list(shape = "circle", fontname = "Helvetica",
-                               width = 1.5,
-                               height = 1,fixedsize = F, width = 1,
-                               color = "grey", style="filled"),
-           edge_options = list(color = "black", arrowhead= "normal"),
-           coefs = T,
-           stand = T,
-           labels=list(Beh="Sociosexual Behaviour", Att="Sociosexual Attitude",Des= "Sociosexual Desire", 
-                       SOI= "Sociosexuality", SOI_1= "ITEM1", SOI_2= "ITEM2", SOI_3= "ITEM3", SOI_4= "ITEM4",
-                       SOI_5="ITEM5", SOI_6="ITEM6", SOI_7="ITEM7", SOI_8="ITEM8", SOI_9="ITEM9"), covs=F)
-
-
-
-semPlot::semPaths(cfa_bif, thresholds = FALSE, intercepts = FALSE, covAtResiduals = F,layout= "tree2", bifactor = "SOI",
-         nodeLabels = c("ITEM1", "ITEM2 ", "ITEM3", "ITEM4", "ITEM5", "ITEM6", "ITEM7", "ITEM8", "ITEM9"
-                        , "Sociosexual Behavior", "Sociosexual Attitude", "Sociosexual Desire", "Sociosexuality"),
-         sizeMan = 5, sizeLat = 10, shapeMan = "rectangle", shapeLat = "ellipse", whatLabels="est", edge.label.cex = 1, 
-         label.cex= 3)### zoom
-
-
-#### Try it
-DiagrammeR::mermaid("graph TB;
-                    SOI-->SOI_1
-                    SOI-->SOI_2
-                    SOI-->SOI_3
-                    SOI-->SOI_4
-                    SOI-->SOI_5
-                    SOI-->SOI_6
-                    SOI-->SOI_7
-                    SOI-->SOI_8
-                    SOI-->SOI_9;
-                
-            
-                    Beh-->SOI_1
-                    Beh-->SOI_2
-                    Beh-->SOI_3
-                    
-                    Att-->SOI_4
-                    Att-->SOI_5
-                    Att-->SOI_6
-                    
-                    Des-->SOI_7
-                    Des-->SOI_8
-                    Des-->SOI_9")
-
-
 
 
 
